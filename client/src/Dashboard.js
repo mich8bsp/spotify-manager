@@ -66,7 +66,7 @@ export default function Dashboard({ code }) {
         return () => clearInterval(interval)
     }, [accessToken])
 
-    const playlistsFetchBucketSize = 20
+    const playlistsFetchBucketSize = 50
     useEffect(() => {
         if (!accessToken) return
 
@@ -131,9 +131,6 @@ export default function Dashboard({ code }) {
     }, [accessToken, playlists])
 
     if (currentSong) {
-        const filteredPlaylists = playlistsData.filter(playlist => {
-            return playlist.tracks.map(track => track.name).includes(currentSong.title)
-        })
         return (
             <Container className="d-flex flex-column py-2" style={{ height: "100vh" }}>
                 <div className="flex-grow-1 my-2">
