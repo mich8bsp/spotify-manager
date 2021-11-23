@@ -9,8 +9,17 @@ const spotifyApi = new SpotifyWebApi({
     clientId: '6c133b2eb3c743f8a0d5e893eea3d20f'
 })
 
-const relevantPlaylists = [
-    'All-Time Favourites', 'Headbangers', 'Trippy', 'Upbeat', 'All That Jazz', 'Cowboys, Bards and Pirates', 'Melancholy Hill', 'Chillax Music', 'Focus Instrumental Music', 'Classical/Symphonic'
+const relevantPlaylistIds = [
+'2gZPR6s6CqPCFS8PkFJVB1',
+'6zaQ2LljTzjOkjAB1NAi0O',
+'1ndbTHDRgWhSbcFLSQa7VX',
+'1DjCxp3lJIWrrtd2dikH2q',
+'6BQSo4vzjq0HK7udpEraXb',
+'3sAJHMqx7bq7g7o4zu59Z8',
+'3XG74ITJmLYKnh9ziwaC3r',
+'5Z7F5os7xl24wk9Ud8QYNf',
+'2J9p3qUkoN8Wbb38F6diVX',
+'3GEG8hce8Ip3NAZmcEaMbl'
 ]
 
 export default function Dashboard({ code }) {
@@ -76,7 +85,9 @@ export default function Dashboard({ code }) {
                         limit: playlistsFetchBucketSize,
                         offset: bucketId * playlistsFetchBucketSize
                     }).then(res => {
-                        return res.body.items.filter(playlist => relevantPlaylists.includes(playlist.name)).map(playlist => {
+                        return res.body.items.filter(playlist =>
+                            relevantPlaylistIds.includes(playlist.uri.split(":").at(-1))
+                        ).map(playlist => {
                             return {
                                 name: playlist.name,
                                 uri: playlist.uri,
