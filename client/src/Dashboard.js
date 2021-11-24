@@ -6,7 +6,7 @@ import Track from "./Track";
 import PlaylistResult from "./PlaylistResult";
 
 const spotifyApi = new SpotifyWebApi({
-    clientId: '6c133b2eb3c743f8a0d5e893eea3d20f'
+    clientId: process.env.REACT_APP_CLIENT_ID
 })
 
 const relevantPlaylistIds = [
@@ -27,6 +27,9 @@ export default function Dashboard({ code }) {
     const [currentSong, setCurrentSong] = useState()
     const [playlists, setPlaylists] = useState([])
     const [playlistsData, setPlaylistsData] = useState([])
+
+    const playlistsFetchBucketSize = 50
+    const currentPlayingFetchIntervalSec = 10
 
     useEffect(() => {
         if (!accessToken) return
@@ -61,12 +64,12 @@ export default function Dashboard({ code }) {
                 })
         }
         callback()
-        const interval = setInterval(callback, 10 * 1000)
+        const interval = setInterval(callback, currentPlayingFetchIntervalSec * 1000)
 
         return () => clearInterval(interval)
     }, [accessToken])
 
-    const playlistsFetchBucketSize = 50
+  
     useEffect(() => {
         if (!accessToken) return
 
