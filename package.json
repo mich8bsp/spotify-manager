@@ -1,0 +1,11 @@
+{
+	"name": "spotify-manager",
+	"version": "0.0.1",
+	"private": "true",
+	"scripts": {
+		"start": "concurrently \"cd server && npm run start\"  \"cd client && npm run start\""
+	},
+	"dependencies": {
+		"concurrently": "^6.5.0"
+	}
+}
