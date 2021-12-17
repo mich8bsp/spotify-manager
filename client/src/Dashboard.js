@@ -114,18 +114,32 @@ export default function Dashboard({ code }) {
 
         Promise.all(playlists.map(playlist => {
             console.log("sending request to fetch tracks for playlist " + playlist.name)
-            return spotifyApi.getPlaylistTracks(playlist.playlistId)
+            return spotifyApi.getPlaylistTracks(playlist.playlistId, {limit: 50})
             .then(res => {
-                return {
-                    name: playlist.name,
-                    uri: playlist.uri,
-                    playlistId: playlist.playlistId,
-                    tracks: res.body.items.map(item => item.track)
-                }
+                const numOfBuckets = Math.ceil(res.body.total / res.body.limit)
+                console.log(numOfBuckets)
+                const buckets = [...Array(numOfBuckets).keys()]
+
+                return Promise.all(buckets.map(bucketId => {
+                    console.log("sending request with offset " + bucketId * playlistsFetchBucketSize)
+                    return spotifyApi.getPlaylistTracks(playlist.playlistId, {
+                        limit: playlistsFetchBucketSize,
+                        offset: bucketId * playlistsFetchBucketSize
+                    }).then(res => {
+                        return res.body.items.map(item => item.track)
+                    })
+                })).then((values) => {
+                    const fetchedTracks = values.flatMap(x => x)
+                    return {
+                        name: playlist.name,
+                        uri: playlist.uri,
+                        playlistId: playlist.playlistId,
+                        tracks: fetchedTracks
+                    }
+                })
             })
         })).then((values) => {
             const fetchedPlaylistsData = values.flatMap(x => x)
-            console.log(fetchedPlaylistsData)
             setPlaylistsData(fetchedPlaylistsData)
         })
         .catch((err) => {
